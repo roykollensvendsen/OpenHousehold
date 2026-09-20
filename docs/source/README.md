@@ -7,6 +7,6 @@ The conversation itself was not available and has not been independently verifie
 
 SHA-256: `911037069231727638044651a9f4388f7702f14fa4ce53e5f0d039dd5371754c`
 
-Keep the source immutable; changes belong in the reviewed specification. This
-private source mentions the household's intended financial integrations. Before
-any future public publication, review whether to publish or redact that history.
+Keep the source immutable; changes belong in the reviewed specification. The user
+authorized public publication on 2026-09-20. The source describes intended financial
+integrations but contains no account numbers, credentials or transaction records.

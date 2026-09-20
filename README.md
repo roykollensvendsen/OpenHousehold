@@ -4,7 +4,7 @@ A self-hosted household finance project: shared understanding, one savings goal,
 independent bank consent and human control over financial decisions.
 
 **Status: specification and design review. No financial application is implemented.**
-This private repository is being established for Roy and the household. Product
+This public repository initially serves one household. Product
 policies and architecture in version 0.2 await owner approval.
 
 ## Start here

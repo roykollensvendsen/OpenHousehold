@@ -11,6 +11,5 @@
 | External LLM analysis | Data disclosure and explainability need decisions. | Explicit processor/data-policy review and measurable benefit. | Both adults |
 | Additional households / hosted service | Regulatory, provider and tenancy scope changes. | A real external household is to be served under reviewed terms. | Roy |
 | Native mobile apps | Browser client covers current devices. | Browser usability evidence shows an unmet need. | Owners |
-| Public publication | User requested private GitHub. | Explicit request to publish plus review of source draft/privacy and licenses. | Roy |
 | Concrete OpenAPI/JSON schemas and package lockfiles | Runtime/reuse contract not selected. | Stack/API selected during G1; create with first implementation slice. | Maintainer |
 | Additional notification channels | In-app notices sufficient for proposed scope. | Owners select a channel and approve data included in notifications. | Owners |

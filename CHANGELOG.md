@@ -6,5 +6,5 @@
 - Define 44 requirements with 27 linked planned acceptance scenarios.
 - Clarify proposed goal arithmetic, ownership, sharing, import identity and failure states.
 - Add architecture, threat model, recovery policy, research and owner decisions.
-- Establish repository validation and private GitHub publication workflow.
+- Establish repository validation and publish on GitHub with owner-approved public visibility.
 - Keep product implementation gated on owner review.

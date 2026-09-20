@@ -18,7 +18,7 @@ technical decisions and records evidence. “Baseline” means before product co
 | Q-09 | Product/UX | Norwegian Bokmål, NOK goals, Europe/Oslo, in-app notices initially. | Both adults | Baseline: confirm locale and notice expectations, including host-down limitations. |
 | Q-10 | Release/security | Applicable ASVS 5.0.0 Level 2 controls and accepted residual risks. | Maintainer + owners | Live: versioned mapping, verification evidence and recorded risk acceptance. |
 
-Publication choice is settled by the user's instruction: **private GitHub repo**.
+Publication choice is settled by the user's latest instruction: **public GitHub repo**.
 The project name is settled: **OpenHousehold**. Neither decision approves product
 implementation or bank access. No credentials or household financial records are
 needed to review this baseline.
