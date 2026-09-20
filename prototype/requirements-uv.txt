@@ -1,0 +1,3 @@
+# The resolver itself, hash-pinned for CI. Linux x86_64 wheel, from PyPI.
+uv==0.10.2 \
+    --hash=sha256:937687df0380d636ceafcb728cf6357f0432588e721892128985417b283c3b54

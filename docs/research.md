@@ -18,6 +18,24 @@ duplicating history. The continuing interface also documents limits on unattende
 reads and history. Record capabilities per connection rather than assuming
 unlimited history or permanently valid consent.
 
+The provider's [API reference](https://enablebanking.com/docs/api/reference/),
+read on 2026-09-20, documents the mechanics the prototype is built on: RS256 JWT
+authorization with the application id as `kid`, `GET /aspsps` for routes and each
+route's `maximum_consent_validity`, `POST /auth` with a mandatory `access.valid_until`
+no later than that validity, `POST /sessions` exchanging the callback code for a
+session and its accounts, `GET /accounts/{uid}/balances` and `/transactions` with
+`continuation_key` pagination, and `DELETE /sessions/{id}`. Documentation, not a
+live call: no provider account exists and nothing has been retrieved from a bank.
+
+Its [control panel documentation](https://enablebanking.com/docs/api/control-panel/),
+read on 2026-09-20, describes the onboarding: register an application per
+environment, with the browser generating the private key locally or the developer
+supplying a public key; whitelist redirect URLs; and activate either unrestricted,
+after manual review with contract, KYC and billing, or restricted, by linking your
+own accounts so retrieval is limited to them. Restricted activation is the only
+route a household should assume. Whether a localhost redirect URL is accepted is
+not documented and remains untested.
+
 Provider evidence must record institution/version, account types, both owners'
 eligibility, price and future charges, consent/renewal, history, balance semantics,
 quotas, deletion, processing locations and a disconnect/reconnect trial. Any paid
