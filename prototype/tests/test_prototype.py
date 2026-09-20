@@ -160,6 +160,66 @@ class LocalStorage(unittest.TestCase):
         path.unlink()
 
 
+class ProviderKey(unittest.TestCase):
+    """The control panel generates the key; we must be able to take it over."""
+
+    def setUp(self):
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        self.serialization = serialization
+        self.rsa = rsa
+        self.directory = Path(tempfile.mkdtemp(prefix="openhousehold-key-"))
+        storage.initialize(self.directory, PASSPHRASE)
+        self.addCleanup(shutil.rmtree, self.directory, ignore_errors=True)
+
+    def write_key(self, bits: int, password: bytes | None = None) -> Path:
+        key = self.rsa.generate_private_key(public_exponent=65537, key_size=bits)
+        encryption = (self.serialization.BestAvailableEncryption(password) if password
+                      else self.serialization.NoEncryption())
+        path = self.directory / f"downloaded-{bits}.pem"
+        path.write_bytes(key.private_bytes(self.serialization.Encoding.PEM,
+                                           self.serialization.PrivateFormat.PKCS8, encryption))
+        path.chmod(0o600)
+        return path
+
+    def public(self, key) -> bytes:
+        return key.public_bytes(self.serialization.Encoding.PEM,
+                                self.serialization.PublicFormat.SubjectPublicKeyInfo)
+
+    def test_setup_offers_a_public_key_for_the_other_registration_route(self):
+        exported = (self.directory / "application-public-key.pem").read_bytes()
+        self.assertIn(b"BEGIN PUBLIC KEY", exported)
+        self.assertNotIn(b"PRIVATE", exported)
+        self.assertEqual(exported, self.public(Vault(self.directory, PASSPHRASE).key.public_key()))
+
+    def test_a_downloaded_key_replaces_ours_and_is_stored_encrypted(self):
+        source = self.write_key(2048)
+        expected = self.public(self.serialization.load_pem_private_key(source.read_bytes(), None).public_key())
+        storage.adopt(self.directory, source, PASSPHRASE)
+        self.assertEqual(self.public(Vault(self.directory, PASSPHRASE).key.public_key()), expected)
+        self.assertFalse((self.directory / "application-public-key.pem").exists())
+        stored = (self.directory / "application-key.pem").read_bytes()
+        self.assertIn(b"ENCRYPTED PRIVATE KEY", stored)
+        with self.assertRaises(LocalError):
+            Vault(self.directory, "a-wrong-test-passphrase")
+
+    def test_an_unusable_key_file_is_refused(self):
+        junk = self.directory / "junk.pem"
+        junk.write_bytes(b"not a key")
+        junk.chmod(0o600)
+        for source in (junk, self.write_key(2048, b"already-protected"), self.write_key(1024)):
+            with self.assertRaises(LocalError):
+                storage.adopt(self.directory, source, PASSPHRASE)
+
+    def test_the_application_id_comes_from_the_downloaded_file_name(self):
+        from prototype.__main__ import application_id
+        identifier = "1ab0daa1-26d6-40da-8a0a-6e0d6de332a2"
+        self.assertEqual(application_id(self.directory, identifier), identifier)
+        self.assertEqual(application_id(self.directory, None), identifier)
+        with self.assertRaises(LocalError):
+            application_id(self.directory, "downloaded-2048")
+
+
 class Rendering(unittest.TestCase):
     def test_bank_text_cannot_inject_markup(self):
         page = app.render({"csrf": "t", "message": "", "application": {}, "banks": [],

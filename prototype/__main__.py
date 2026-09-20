@@ -1,4 +1,4 @@
-"""Command line for the local prototype: init, serve, demo."""
+"""Command line for the local prototype: init, import-key, serve, demo."""
 
 from __future__ import annotations
 
@@ -39,12 +39,31 @@ def command_init(args) -> None:
     storage.initialize(LIVE_DIR, passphrase(confirm=True))
     print(f"""Oppsettet ligger i {LIVE_DIR} (kun lesbart for deg).
 
-Neste steg, som bare du kan gjøre:
-  1. Opprett en konto hos Enable Banking og registrer en applikasjon.
-  2. Last opp {LIVE_DIR / 'application-certificate.pem'} som applikasjonens sertifikat.
+Neste steg, som bare du kan gjøre, i kontrollpanelet hos Enable Banking:
+  1. Logg inn og registrer en applikasjon i Production-miljøet.
+  2. Registrer {provider.CALLBACK} som returadresse.
   3. Velg tjenesten AIS (kontoinformasjon) alene, uten betalingsrettigheter.
-  4. Registrer {provider.CALLBACK} som returadresse, og lenk dine egne kontoer.
-  5. Kjør: uv run python -m prototype serve --app-id <applikasjons-ID>""")
+  4. Aktiver applikasjonen ved å lenke dine egne bankkontoer.
+
+Om nøkkelen, velg én av to veier:
+  A. La nettleseren lage nøkkelen. Den lastes ned som <applikasjons-ID>.pem.
+     Kjør så: uv run python -m prototype import-key ~/Downloads/<applikasjons-ID>.pem
+  B. Oppgi vår egen offentlige nøkkel ved registrering:
+     {LIVE_DIR / 'application-public-key.pem'}
+     Kjør så: uv run python -m prototype serve --app-id <applikasjons-ID>""")
+
+
+def command_import(args) -> None:
+    source = Path(args.key).expanduser()
+    if not source.is_file():
+        raise LocalError("Fant ikke nøkkelfilen.")
+    secret = passphrase()
+    storage.adopt(LIVE_DIR, source, secret)
+    identifier = application_id(LIVE_DIR, args.app_id or source.stem)
+    Vault(LIVE_DIR, secret)  # Fail here rather than mid-flow if the passphrase is wrong.
+    print(f"""Nøkkelen er lagret kryptert i {LIVE_DIR} for applikasjon {identifier}.
+Slett nedlastingen: shred -u {source}
+Kjør så: uv run python -m prototype serve""")
 
 
 def command_serve(args) -> None:
@@ -73,6 +92,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="prototype", description=__doc__)
     subcommands = parser.add_subparsers(dest="command", required=True)
     subcommands.add_parser("init", help="lag lokale nøkler og sertifikater").set_defaults(run=command_init)
+    adopt = subcommands.add_parser("import-key", help="ta i bruk nøkkelen kontrollpanelet lagde")
+    adopt.add_argument("key", help="nedlastet <applikasjons-ID>.pem")
+    adopt.add_argument("--app-id", help="brukes hvis filnavnet ikke er applikasjons-ID-en")
+    adopt.set_defaults(run=command_import)
     serve = subcommands.add_parser("serve", help="kjør mot banken med lesetilgang")
     serve.add_argument("--app-id", help="applikasjons-ID fra leverandørens kontrollpanel")
     serve.set_defaults(run=command_serve)

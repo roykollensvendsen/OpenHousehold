@@ -27,18 +27,43 @@ The provider is Enable Banking, chosen as a candidate in
 
 ```sh
 uv sync --locked
-uv run python -m prototype init          # local keys and certificates
+uv run python -m prototype init
 ```
 
-`init` prints the remaining steps, which only the account owner can perform:
-register an application in the provider's control panel, upload
-`.local-bank/application-certificate.pem`, select the AIS service alone,
-register `https://localhost:8767/callback` as the redirect URL, and link your
-own accounts. Then:
+The remaining steps are in the provider's control panel and only the account
+owner can perform them. They follow its
+[documentation](https://enablebanking.com/docs/api/control-panel/), read
+2026-09-20:
 
-```sh
-uv run python -m prototype serve --app-id <application id>
-```
+1. Sign in, open **API applications**, and fill out **Add a new application**.
+2. Choose the **Production** environment. Sandbox serves the provider's test
+   banks, not yours.
+3. Whitelist `https://localhost:8767/callback` as the redirect URL. The
+   documentation does not say whether a localhost URL is accepted; if it is
+   refused, the callback has to move before a live run is possible.
+4. Select the AIS service alone, with no payment rights. The client refuses
+   payment paths regardless, but the consent itself should not carry them.
+5. Activate the application in **restricted mode** by linking your own bank
+   accounts, which limits retrieval to exactly those accounts. Unrestricted
+   activation requires a contract, KYC and billing, and is not this probe's path.
+
+Registering a production application also asks for a description, a data
+protection email, a privacy policy URL and a terms of service URL.
+
+The key pair can come from either side:
+
+- **The panel generates it.** The browser creates the private key and downloads
+  it as `<application id>.pem`, which carries the application id in its name.
+  ```sh
+  uv run python -m prototype import-key ~/Downloads/<application id>.pem
+  shred -u ~/Downloads/<application id>.pem
+  uv run python -m prototype serve
+  ```
+- **We generate it.** Provide `.local-bank/application-public-key.pem` during
+  registration instead, and keep the private key where `init` put it.
+  ```sh
+  uv run python -m prototype serve --app-id <application id>
+  ```
 
 Open `https://localhost:8767/`. The certificate is self-signed and local, so the
 browser will warn once; verify the fingerprint against

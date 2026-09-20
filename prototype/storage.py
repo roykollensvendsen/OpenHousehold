@@ -85,7 +85,8 @@ def initialize(path: Path, password: str) -> None:
     write_private(path / "application-key.pem", key.private_bytes(
         serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
         serialization.BestAvailableEncryption(password.encode())))
-    write_private(path / "application-certificate.pem", certificate(key, "OpenHousehold personal prototype"))
+    write_private(path / "application-public-key.pem", key.public_key().public_bytes(
+        serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo))
     # The TLS key also stays encrypted; the same passphrase unlocks the process.
     tls = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     write_private(path / "localhost-key.pem", tls.private_bytes(
@@ -93,6 +94,20 @@ def initialize(path: Path, password: str) -> None:
         serialization.BestAvailableEncryption(password.encode())))
     write_private(path / "localhost-certificate.pem", certificate(tls, "localhost", True))
     write_private(path / "salt", os.urandom(16))
+
+
+def adopt(path: Path, source: Path, password: str) -> None:
+    """Take over a private key the provider's control panel generated for us."""
+    try:
+        key = serialization.load_pem_private_key(read_private(source), None)
+    except (ValueError, TypeError):
+        raise LocalError("Filen er ikke en ubeskyttet PEM-privatnøkkel.") from None
+    if not isinstance(key, rsa.RSAPrivateKey) or key.key_size < 2048:
+        raise LocalError("Nøkkelen må være RSA på minst 2048 bit.")
+    write_private(path / "application-key.pem", key.private_bytes(
+        serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
+        serialization.BestAvailableEncryption(password.encode())))
+    (path / "application-public-key.pem").unlink(missing_ok=True)
 
 
 class Vault:
