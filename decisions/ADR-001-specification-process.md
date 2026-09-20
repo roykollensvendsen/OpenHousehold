@@ -17,4 +17,5 @@ tooling requires no dependency installation or product runtime decision.
 Consequences: documentation CI cannot prove the application meets requirements.
 Product scenarios are explicitly planned. Runtime scaffolding, packaging, API
 schemas and product tests arrive with the approved stack and first vertical slice.
-Private forge rules depend on account capabilities and must be reported honestly.
+Forge rules depend on visibility/account capabilities and are reported from
+verified settings. The user subsequently authorized public publication.

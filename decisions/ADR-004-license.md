@@ -12,5 +12,5 @@ strong copyleft; the draft does not require downstream changes to be published.
 The [license text](../LICENSE) controls its terms. This choice grants no rights to
 third-party banking data, trademarks, standards or copied software beyond their
 own licenses. Review each component before integration; publishing the project
-under Apache-2.0 does not relicense Firefly or any other dependency. The private
-GitHub visibility is an independent hosting choice.
+under Apache-2.0 does not relicense Firefly or any other dependency. GitHub
+visibility is an independent hosting choice; the user approved public visibility.

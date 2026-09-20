@@ -4,7 +4,7 @@
 
 Preserve the original draft; document review findings; publish requirements,
 scenarios, proposed architecture and threat model; validate links and traceability;
-initialize local history and a private GitHub remote. This is repository work,
+initialize local history and the user-approved public GitHub remote. This is repository work,
 not a working financial product.
 
 ## G1 — owner-approved baseline

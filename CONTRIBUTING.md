@@ -11,11 +11,13 @@ related decision. Do not reuse IDs. Keep source/voice-spec-v0.1.md immutable und
 docs; it is evidence of the starting point. New product choices remain proposed
 until approval is recorded. Add changelog entries for substantive changes.
 
-Use a branch and pull request for review when collaborating. Initial bootstrap
-and maintenance may use direct pushes while forge protection is unavailable.
-A suggested review process is not a claim of server-side enforcement. Actual
-GitHub protection and security settings are recorded in the verification report.
-No force push over shared main history is part of this process.
+Use a branch and pull request. GitHub protects main, including administrators:
+the specification check must pass against an up-to-date base, conversations must
+be resolved, and force pushes/deletion are disabled. Merge by rebase. The policy
+requires a pull request but zero approving reviews, so a sole maintainer can
+merge passing repository changes. Product-baseline approval remains a separate
+owner decision; a passing PR does not grant it. Actual GitHub settings and their
+verification are recorded in the evidence report.
 
 ## Required executable checks
 
