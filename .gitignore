@@ -1,0 +1,20 @@
+# Runtime data and credentials do not belong in the repository.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.db
+/data/
+/backups/
+/exports/
+/secrets/
+/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
