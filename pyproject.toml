@@ -1,0 +1,13 @@
+[project]
+name = "openhousehold-bank-prototype"
+version = "0.1.0"
+description = "Local single-owner AIS feasibility prototype; not the household product"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = [
+  "cryptography>=45,<52",
+  "PyJWT[crypto]>=2.10,<3",
+]
+
+[tool.uv]
+package = false
